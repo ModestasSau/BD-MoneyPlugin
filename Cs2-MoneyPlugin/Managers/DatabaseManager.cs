@@ -14,7 +14,7 @@ namespace Cs2_MoneyPlugin
         // for low amounts
         public async Task<bool> AddMoneyAsync(string steamid, int amount)
         {
-            if (steamid.Length == 17)
+            if (BaseManager.CheckSteamid(steamid))
             {
                 if (DB != null && API == null)
                 {
@@ -44,6 +44,14 @@ namespace Cs2_MoneyPlugin
         public async Task<bool> AddMoneyAsync(Dictionary<string, int> playersToPay)
         {
             bool result = false;
+            foreach (var p in playersToPay)
+            {
+                if (!BaseManager.CheckSteamid(p.Key))
+                {
+                    return false;
+                }
+            }
+
             if (DB != null && API == null)
             {
                 foreach (var pair in playersToPay)
@@ -61,6 +69,9 @@ namespace Cs2_MoneyPlugin
         // Transfering money from playerA to playerB with specific take/give amounts
         public async Task<bool> TransferMoney(string fromSteamid, int takeAmount, string toSteamid, int giveAmount)
         {
+            if (!BaseManager.CheckSteamid(fromSteamid)) return false;
+            if (!BaseManager.CheckSteamid(toSteamid)) return false;
+
             bool result = false;
             if (DB != null && API == null)
             {
@@ -76,6 +87,8 @@ namespace Cs2_MoneyPlugin
         // Take players money
         public async Task<bool?> TakeMoney(string steamid, int amount)
         {
+            if (!BaseManager.CheckSteamid(steamid)) return false;
+
             bool? result = false;
             if (DB != null && API == null)
             {
@@ -91,6 +104,8 @@ namespace Cs2_MoneyPlugin
         // Reset players money
         public void ResetMoney(string steamid)
         {
+            if (!BaseManager.CheckSteamid(steamid)) return;
+
             // Checking connetion to DB/API
             if (DB != null && API == null)
             {
@@ -118,6 +133,8 @@ namespace Cs2_MoneyPlugin
         // Get player money
         public async Task<int?> GetPlayerBalanceNoPrint(string steamid)
         {
+            if (!BaseManager.CheckSteamid(steamid)) return null;
+
             if (DB != null && API == null)
             {
                 return await DB.GetPlayerBalanceAsync(steamid);
@@ -157,6 +174,8 @@ namespace Cs2_MoneyPlugin
 
         public async Task<PlayerStatsAPI?> GetPlayerStats(string steamid)
         {
+            if (!BaseManager.CheckSteamid(steamid)) return null;
+
             if (DB != null && API == null)
             {
                 return await DB.GetPlayerStats(steamid);

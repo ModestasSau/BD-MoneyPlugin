@@ -56,5 +56,14 @@ public static class BaseManager
 
         return playerController.TeamNum == 2 || playerController.TeamNum == 3;
     }
+
+    static public bool CheckSteamid(string steamid)
+    {
+        if (string.IsNullOrEmpty(steamid)) return false;
+        if (!ulong.TryParse(steamid, out _)) return false;
+        if (steamid.Length != 17) return false;
+        if (steamid.Substring(0, 3) != "765") return false;
+        return true;
+    }
 }
 

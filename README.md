@@ -1,8 +1,6 @@
 # MoneyPlugin #
 
-MoneyPlugin for Counter-Strike is a versatile plugin designed to enhance the gameplay experience by introducing various commands and features related to in-game currency management and rewards. 
-It extends the functionality of your Counter-Strike server by providing commands such as `/givemoney`, `/takemoney`, and `/resetmoney`, 
-allowing server administrators to manage player finances according to specific needs. 
+MoneyPlugin for Counter-Strike is a versatile plugin designed to enhance the gameplay experience by introducing various commands and features related to in-game currency management and rewards. It extends the functionality of your Counter-Strike server by providing commands such as `/givemoney`, `/takemoney`, and `/resetmoney`, allowing server administrators to manage player finances according to specific needs. 
 
 ## Features ##
 
@@ -21,13 +19,14 @@ allowing server administrators to manage player finances according to specific n
 
 - **MoneyPluginAPI**
 	Methods:
-	- GetPlayerStats(string steamid) *returns PlayerStatistics object*
-	- GetPlayerBalance(string steamid) *returns int value*
-	- GivePlayerMoney(string steamid, in money) *void*
-	- AwardPlayerMoney(string steamid, int money, string? prefix = null, string? messageToPlayer = null) *prefix and messageToPlayer are optional, by default null, there applies VIP multiplier for given money amount. Returns bool*
-	For Jailbreak servers:
-	- AwardLRWinnerPlayer(string steamid, int money) *(you can use these, or from above, doesnt matter)
-	- AwardLRLoserPlayer(string steamid, int money)
+	- `GetPlayerStats(string steamid)` *returns PlayerStatistics object*
+	- `GetPlayerBalance(string steamid)` *returns int value*
+	- `GivePlayerMoney(string steamid, in money)` *void*
+	- `AwardPlayerMoney(string steamid, int money, string? prefix = null, string? messageToPlayer = null)`
+ 		- 	*prefix and messageToPlayer are optional, by default null, there applies VIP multiplier for given money amount. Returns bool*
+	**For Jailbreak servers:**
+	- `AwardLRWinnerPlayer(string steamid, int money)` *(you can use these, or from above, doesnt matter)
+	- `AwardLRLoserPlayer(string steamid, int money)`
 
 - **API Endpoints Usage**: Uses API endpoints for better data checking and managing. Using Auth - Bearer token.
 - **Database Support**: Utilize MySQL databases for storing and managing player financial data.

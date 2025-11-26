@@ -1,0 +1,72 @@
+{
+    "PLUGIN_PREFIX": "{red}MoneyPlugin {orange}• {default}",
+    "PLUGIN_CURRENCY_NAME": "credits",
+    "cmd.cooldown": "Too fast! Wait {orange}{0} {default}seconds",
+    "cmd.cancel": "{red}Canceled",
+    "cmd.accept": "{green}Accepted",
+    "cmd.menu": "{orange}Commands menu",
+    "cmd.menu.exit": "Close: !9 or /9",
+    // Money balance
+    "cmd.caller.money": "{0}: {green}{1}",
+    "cmd.caller.buy.exceeded": "{red}You can only buy {0} per round!",
+    "cmd.caller.money.error": "{orange}Couldn't load your balance.. Try again later.",
+    "cmd.caller.money.notenough": "{red}You dont have enough {0}",
+    "cmd.caller.error": "{red} Not available right now. Try again later..",
+    // Money manage
+    "cmd.caller.announce.addmoney": "{orange}{0} {default}{1} has been added to {orange}{2}",
+    "cmd.caller.announce.takemoney": "{orange}{0} {red}{1} have been taken from {orange}{2}",
+    "cmd.caller.announce.resetmoney": "{red}SteamID64:{orange}{0} {red}{1} have been reseted!",
+    "cmd.target.announce.addmoney": "You have been awarded with {orange}{0} {default}{1}",
+    "cmd.target.announce.takemoney": "{orange}{0} {red}{1} have been taken from you by administrator!",
+    "cmd.target.announce.resetmoney": "{orange}{0} {red}{1} have been taken from you by administrator!",
+    // Money transfer
+    "cmd.caller.transfer.players.menu": "{orange}Select player:",
+    "cmd.caller.transfer.amount": "Type amount: (or type {red}cancel{default})",
+    "cmd.caller.transfer.amount.html": "<font color='orange'>~~~~~~~~~~~~~~~~~~~~~~~~</font><br>Type transfer amount in chat..<br>Or type <font color='red'>cancel</font><br><font color='orange'>~~~~~~~~~~~~~~~~~~~~~~~~</font>",
+    "cmd.caller.transfer.amount.selected": "Selected: {green}{0} {default}{1}",
+    "cmd.caller.transfer.players.online.none": "{red}There are no players online.",
+    "cmd.caller.transfer.unavailable": "{red}Transfer is currently unavailable.. Try again later",
+    "cmd.caller.transfer.money.notenough": "{red}You dont have enough {0} to transfer.",
+    "cmd.caller.transfer.successful": "{green}Success! {default}Transfered {green}{0} {1} to {orange}{1}",
+    "cmd.target.transfer.successful": "Yoo!! {orange}{0} {default}transfered {green}{1} {default}{2} to you!",
+    "cmd.transfer.error": "{red}Transfer unsuccessful.. Try again later",
+    "cmd.select.money.incorrect": "{red}Incorrect amount!",
+    // Transfer success
+    "cmd.transfer.confirm.html": "<font color='lime'>Transfer Confirmation</font><br>Transfer fee: <font color='orange'>{0} %</font><br>Amount: <font color='orange'>{1}</font> kebabs<br>To: <font color='lime'>{2}</font>",
+    // Event handler responses
+    "event.response.kill": "{green} +{0} {default}{1} for kill{default}!",
+    "event.response.noscope": "{green} +{0} {default}{1} for {red}NoScope kill{default}!",
+    "event.response.noscope.headshot": "{green} +{0} {default}{1} for {red}NoScope HeadShot{default}!",
+    "event.response.headshot": "{green} +{0} {default}{1} for HS{default}!",
+    "event.response.knife": "{green} +{0} {default}{1} for Knife kill{default}!",
+    "event.response.taser": "{green} +{0} {default}{1} for Taser kill{default}!",
+    "event.response.roundwin": "{green} +{0} {default}{1} for round win!",
+    "event.response.roundlose": "{green} +{0} {default}{1} for lost round!",
+    "event.response.mvp": "{green} +{0} {default}{1} for {purple}MVP{default}!",
+    "event.response.gamewinner": "{green} +{0} {default}{1} for {green}WIN{default}!",
+    "event.response.gameloser": "{green} +{0} {default}{1} for {red}LOSE{default}!",
+    "event.response.gametie": "{green} +{0} {default}{1} for {orange}TIE{default}!",
+    // Stats
+    "stats.title": "Earning stats",
+    "stats.top": "Your TOP per day",
+    "stats.today": "Today earned",
+    "stats.needed.for.record": "Needed to break record: <font color='orange'>{0}</font>",
+    "stats.new.record": "You achieved your daily TOP record!",
+    "stats.menu.close": "<font color='orange'>~~~~~ <font color='red'>CLOSE: type <font color='lime'>!9</font></font> ~~~~~</font>",
+    // Menu options
+    "commands.menu.check.money": "Check money",
+    "commands.menu.check.money.stats": "Check money stats",
+    "commands.menu.transfer.money": "Transfer money",
+    "commands.menu.buy.healthshot": "Buy healthshot for {0} {1}",
+    "commands.menu.settings": "Settings",
+    "commands.menu.back": "Back",
+    // Settings chat feed selector
+    "settings.moneyfeed.enable": "{green}Enable {default}money chat feed",
+    "settings.moneyfeed.disable": "{red}Disable {default}money chat feed",
+    // Settings chat response
+    "settings.moneyfeed.enabled.response": "Money chat feed is now {green}ON",
+    "settings.moneyfeed.disabled.response": "Money chat feed is now {red}OFF",
+    // Jailbreak
+    "event.response.lr.win": "{green} +{0} {default}{1} for LR win!",
+    "event.response.lr.lose": "{green} +{0} {default}{1} for LR lose."
+}

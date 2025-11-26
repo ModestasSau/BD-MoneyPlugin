@@ -10,7 +10,7 @@ MoneyPlugin for Counter-Strike is a versatile plugin designed to enhance the gam
   - `!settings` - opens settings menu
   - `!stats` - shows player earning statistics (TOP per day and earned today)
   - `!transfer` - transfer money to other player
-  - `!hs` - buy healthshot (you can buy one per round).
+  - `!hs` - buy healthshot (amount per round configurable in config).
 
 - **Admin Commands**
      - `!givemoney` - give player specified amount of money

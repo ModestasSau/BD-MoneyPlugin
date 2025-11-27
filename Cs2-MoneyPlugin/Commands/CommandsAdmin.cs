@@ -52,7 +52,7 @@ namespace Cs2_MoneyPlugin
                 }
                 else
                 {
-                    player.LocalizeChatAnnounce(MoneyBase.PL_PREFIX, $"{ChatColors.Red}Invalid #userid, SteamID64 or playername.");
+                    player.LocalizeChatAnnounce(MoneyBase.plPrefix, $"{ChatColors.Red}Invalid #userid, SteamID64 or playername.");
                 }
                 return;
             }
@@ -69,7 +69,7 @@ namespace Cs2_MoneyPlugin
                 }
                 else
                 {
-                    player.LocalizeChatAnnounce(MoneyBase.PL_PREFIX, "Invalid money amount. Ensure you have entered a positive number.");
+                    player.LocalizeChatAnnounce(MoneyBase.plPrefix, "Invalid money amount. Ensure you have entered a positive number.");
                 }
                 return;
             }
@@ -90,7 +90,7 @@ namespace Cs2_MoneyPlugin
                         }
                         else
                         {
-                            player.LocalizeChatAnnounce(MoneyBase.PL_PREFIX, "cmd.caller.announce.addmoney", moneyAmount, target);
+                            player.LocalizeChatAnnounce(MoneyBase.plPrefix, "cmd.caller.announce.addmoney", moneyAmount, target);
                         }
                         _ = instance.AddMoneyAsync(target, moneyAmount);
                         return;
@@ -130,9 +130,9 @@ namespace Cs2_MoneyPlugin
                     }
                     else
                     {
-                        player.LocalizeChatAnnounce(MoneyBase.PL_PREFIX, "cmd.caller.announce.addmoney", moneyAmount, p.PlayerName);
+                        player.LocalizeChatAnnounce(MoneyBase.plPrefix, "cmd.caller.announce.addmoney", moneyAmount, p.PlayerName);
                     }
-                    p.LocalizeChatAnnounce(MoneyBase.PL_PREFIX, "cmd.target.announce.addmoney", moneyAmount);
+                    p.LocalizeChatAnnounce(MoneyBase.plPrefix, "cmd.target.announce.addmoney", moneyAmount);
 
                     _ = instance.AddMoneyAsync(p.SteamID.ToString(), moneyAmount);
                 }
@@ -158,7 +158,7 @@ namespace Cs2_MoneyPlugin
                 }
                 else
                 {
-                    player.LocalizeAnnounce(MoneyBase.PL_PREFIX, $"{ChatColors.Red}Invalid #userid, SteamID64 or playername.");
+                    player.LocalizeAnnounce(MoneyBase.plPrefix, $"{ChatColors.Red}Invalid #userid, SteamID64 or playername.");
                 }
                 return;
             }
@@ -173,7 +173,7 @@ namespace Cs2_MoneyPlugin
                 }
                 else
                 {
-                    player.LocalizeAnnounce(MoneyBase.PL_PREFIX, "Invalid money amount. Ensure you have entered a number.");
+                    player.LocalizeAnnounce(MoneyBase.plPrefix, "Invalid money amount. Ensure you have entered a number.");
                 }
                 return;
             }
@@ -192,7 +192,7 @@ namespace Cs2_MoneyPlugin
                         }
                         else
                         {
-                            player.LocalizeAnnounce(MoneyBase.PL_PREFIX, "cmd.caller.announce.takemoney", moneyAmount, target);
+                            player.LocalizeAnnounce(MoneyBase.plPrefix, "cmd.caller.announce.takemoney", moneyAmount, target);
                         }
                         _ = instance.TakeMoney(target, moneyAmount);
                         return;
@@ -224,9 +224,9 @@ namespace Cs2_MoneyPlugin
                     }
                     else
                     {
-                        player.LocalizeAnnounce(MoneyBase.PL_PREFIX, "cmd.caller.announce.takemoney", moneyAmount, target);
+                        player.LocalizeAnnounce(MoneyBase.plPrefix, "cmd.caller.announce.takemoney", moneyAmount, target);
                     }
-                    p.LocalizeAnnounce(MoneyBase.PL_PREFIX, "cmd.target.announce.takemoney", moneyAmount);
+                    p.LocalizeAnnounce(MoneyBase.plPrefix, "cmd.target.announce.takemoney", moneyAmount);
                     _ = instance.TakeMoney(p.SteamID.ToString(), moneyAmount);
                 }
             });
@@ -249,7 +249,7 @@ namespace Cs2_MoneyPlugin
                 }
                 else
                 {
-                    player.LocalizeAnnounce(MoneyBase.PL_PREFIX, $"{ChatColors.Red}Invalid SteamID64.");
+                    player.LocalizeAnnounce(MoneyBase.plPrefix, $"{ChatColors.Red}Invalid SteamID64.");
                 }
 
                 return;
@@ -270,7 +270,7 @@ namespace Cs2_MoneyPlugin
                         }
                         else
                         {
-                            player.LocalizeAnnounce(MoneyBase.PL_PREFIX, "cmd.caller.announce.resetmoney", target);
+                            player.LocalizeAnnounce(MoneyBase.plPrefix, "cmd.caller.announce.resetmoney", target);
                         }
                         instance.ResetMoney(target);
                         return;
@@ -285,7 +285,7 @@ namespace Cs2_MoneyPlugin
             }
             else
             {
-                player.LocalizeAnnounce(MoneyBase.PL_PREFIX, $"{ChatColors.Red}Invalid SteamID64.");
+                player.LocalizeAnnounce(MoneyBase.plPrefix, $"{ChatColors.Red}Invalid SteamID64.");
             }
         }
 

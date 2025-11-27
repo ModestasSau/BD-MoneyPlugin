@@ -73,7 +73,7 @@ namespace Cs2_MoneyPlugin
             // Cancel
             if (argString.ToLower() == "cancel")
             {
-                player.LocalizeChatAnnounce(MoneyBase.PL_PREFIX, "cmd.cancel");
+                player.LocalizeChatAnnounce(MoneyBase.plPrefix, "cmd.cancel");
 
                 // Toggle off handler
                 findPlayer.TransferCustomMsg = false;
@@ -94,7 +94,7 @@ namespace Cs2_MoneyPlugin
                 else
                 {
                     MenuManager.CloseActiveMenu(player);
-                    player.LocalizeChatAnnounce(MoneyBase.PL_PREFIX, "cmd.select.money.incorrect");
+                    player.LocalizeChatAnnounce(MoneyBase.plPrefix, "cmd.select.money.incorrect");
                 }
 
             }
@@ -296,11 +296,11 @@ namespace Cs2_MoneyPlugin
             // check if VIP
             if (isVip)
             {
-                player.LocalizeChatAnnounce(prefix ?? MoneyBase.PL_PREFIX, localizerName, (int)Math.Round(eventMoney * instance.Config.VipKebabsMultiplier));
+                player.LocalizeChatAnnounce(prefix ?? MoneyBase.plPrefix, localizerName, (int)Math.Round(eventMoney * instance.Config.VipKebabsMultiplier));
                 return (int)Math.Round(eventMoney * instance.Config.VipKebabsMultiplier);
             }
 
-            player.LocalizeChatAnnounce(prefix ?? MoneyBase.PL_PREFIX, localizerName, eventMoney);
+            player.LocalizeChatAnnounce(prefix ?? MoneyBase.plPrefix, localizerName, eventMoney);
             return eventMoney;
         }
 
@@ -345,19 +345,19 @@ namespace Cs2_MoneyPlugin
 
                 if (ctScore < tScore)
                 {
-                    ChatManager.Announce(MoneyBase.PL_PREFIX, $"{ChatColors.Orange}Terrorists {ChatColors.Green}Won!");
+                    ChatManager.Announce(MoneyBase.plPrefix, $"{ChatColors.Orange}Terrorists {ChatColors.Green}Won!");
                     Console.WriteLine($"Terrorists Won!");
                     winnerTeam = 2;
                 }
                 else if (ctScore > tScore)
                 {
-                    ChatManager.Announce(MoneyBase.PL_PREFIX, $"{ChatColors.Orange}Counter-Terrorists {ChatColors.Green}Won!");
+                    ChatManager.Announce(MoneyBase.plPrefix, $"{ChatColors.Orange}Counter-Terrorists {ChatColors.Green}Won!");
                     Console.WriteLine($"Counter-Terrorists Won!");
                     winnerTeam = 3;
                 }
                 else if (ctScore == tScore)
                 {
-                    ChatManager.Announce(MoneyBase.PL_PREFIX, $"{ChatColors.Orange}Teams {ChatColors.Green}TIED!");
+                    ChatManager.Announce(MoneyBase.plPrefix, $"{ChatColors.Orange}Teams {ChatColors.Green}TIED!");
                     Console.WriteLine($"TIED!");
                     winnerTeam = -1;
                 }

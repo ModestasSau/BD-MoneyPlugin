@@ -60,7 +60,7 @@ namespace Cs2_MoneyPlugin
             }
         }
 
-        public async Task<bool> CheckPlayerGambleAsync(string steamid)
+        public async Task<bool> CheckPlayerFeedAsync(string steamid)
         {
             using (var connection = await GetConnectionAsync())
             {

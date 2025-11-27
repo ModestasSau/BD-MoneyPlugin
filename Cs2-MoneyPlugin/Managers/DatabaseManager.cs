@@ -126,7 +126,7 @@ namespace Cs2_MoneyPlugin
             }
             else if (DB == null && API != null)
             {
-                await API.API_GetPlayerBalance(player);
+                await API.GetPlayerBalance(player);
             }
         }
 
@@ -141,7 +141,7 @@ namespace Cs2_MoneyPlugin
             }
             else if (DB == null && API != null)
             {
-                return await API.API_GetPlayerBalance(steamid);
+                return await API.GetPlayerBalance(steamid);
             }
             return null;
         }

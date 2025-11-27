@@ -125,7 +125,7 @@ public class MoneyPluginAPI : IMoneyPlugin
             {
                 if (isMoneyAdded && player != null)
                 {
-                    string prfx = prefix ?? MoneyBase.PL_PREFIX;
+                    string prfx = prefix ?? MoneyBase.plPrefix;
                     string msg = messageToPlayer ?? ChatManager.Localize("cmd.target.announce.addmoney", finalMoney);
                     player.PrintToChat(prfx + msg);
 

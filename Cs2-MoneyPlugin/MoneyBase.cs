@@ -52,7 +52,7 @@ public partial class MoneyBase : BasePlugin, IPluginConfig<BaseConfig>
     public static API? API;
     public DBSQLite? Sqlite;
     public static MoneyBase? instance { get; private set; }
-    public static string PL_PREFIX = $" {ChatColors.Green}[Credits]: {ChatColors.Default}";
+    public static string plPrefix = $" {ChatColors.Green}[Credits]: {ChatColors.Default}";
 
     public HashSet<string> onlinePlayers = new();
     public GameEvents? gameEvents;
@@ -63,7 +63,7 @@ public partial class MoneyBase : BasePlugin, IPluginConfig<BaseConfig>
 
     public override void Load(bool hotReload)
     {
-        PL_PREFIX = ChatManager.Localize("PLUGIN_PREFIX");
+        plPrefix = ChatManager.Localize("PLUGIN_PREFIX");
         instance = this;
 
         htmlPrinter = new(instance);

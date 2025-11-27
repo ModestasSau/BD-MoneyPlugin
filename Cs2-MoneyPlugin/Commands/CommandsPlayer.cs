@@ -74,7 +74,7 @@ public class PlayerCommands
             else
             {
                 int remainingCooldown = (int)(commandCooldown[playerSlot] - DateTime.UtcNow).TotalSeconds;
-                Utilities.GetPlayerFromSlot(playerSlot).LocalizeChatAnnounce(MoneyBase.PL_PREFIX, "cmd.cooldown", remainingCooldown);
+                Utilities.GetPlayerFromSlot(playerSlot).LocalizeChatAnnounce(MoneyBase.plPrefix, "cmd.cooldown", remainingCooldown);
                 return false;
             }
         }
@@ -168,7 +168,7 @@ public class PlayerCommands
         bool active = false;
         if (instance.Sqlite != null)
         {
-            active = await instance.Sqlite.CheckPlayerGambleAsync(player.SteamID.ToString());
+            active = await instance.Sqlite.CheckPlayerFeedAsync(player.SteamID.ToString());
         }
         else
         {
@@ -207,7 +207,7 @@ public class PlayerCommands
 
         if (instance == null || instance.htmlPrinter == null)
         {
-            player.LocalizeAnnounce(PL_PREFIX, "cmd.caller.transfer.unavailable");
+            player.LocalizeAnnounce(plPrefix, "cmd.caller.transfer.unavailable");
             return;
         }
 
@@ -217,7 +217,7 @@ public class PlayerCommands
         IMenuInstance? menuInstance = MenuManager.GetActiveMenu(player);
         instance.htmlPrinter.PrintToPlayer(player, menuInstance, Localize("cmd.caller.transfer.amount.html"), 20);
 
-        player.LocalizeChatAnnounce(PL_PREFIX, "cmd.caller.transfer.amount");
+        player.LocalizeChatAnnounce(plPrefix, "cmd.caller.transfer.amount");
 
         var findPlayer = CustomPlayerMsg.Find(obj => obj.Player == (int)player.Index);
         if (findPlayer == null)
@@ -239,7 +239,7 @@ public class PlayerCommands
             if (findPlayer != null)
             {
                 findPlayer.TransferCustomMsg = false;
-                player.LocalizeChatAnnounce(PL_PREFIX, "cmd.cancel");
+                player.LocalizeChatAnnounce(plPrefix, "cmd.cancel");
                 MenuManager.CloseActiveMenu(player);
             }
         }, TimerFlags.STOP_ON_MAPCHANGE);
@@ -271,12 +271,12 @@ public class PlayerCommands
         }
         if (playersMenu.MenuOptions.Count > 0)
         {
-            player.LocalizeChatAnnounce(PL_PREFIX, "cmd.caller.transfer.amount.selected", amount);
+            player.LocalizeChatAnnounce(plPrefix, "cmd.caller.transfer.amount.selected", amount);
             MenuManager.OpenCenterHtmlMenu(instance, player, playersMenu);
         }
         else
         {
-            player.LocalizeAnnounce(PL_PREFIX, "cmd.caller.transfer.players.online.none");
+            player.LocalizeAnnounce(plPrefix, "cmd.caller.transfer.players.online.none");
             MenuManager.CloseActiveMenu(player);
             return;
         }
@@ -292,7 +292,7 @@ public class PlayerCommands
 
         if (instance == null || instance.htmlPrinter == null)
         {
-            player.LocalizeAnnounce(PL_PREFIX, "cmd.caller.transfer.unavailable");
+            player.LocalizeAnnounce(plPrefix, "cmd.caller.transfer.unavailable");
             return;
         }
 
@@ -326,7 +326,7 @@ public class PlayerCommands
             {
                 Server.NextWorldUpdate(() =>
                 {
-                    player.LocalizeAnnounce(PL_PREFIX, "cmd.caller.transfer.money.notenough", Localize("PLUGIN_CURRENCY_NAME"));
+                    player.LocalizeAnnounce(plPrefix, "cmd.caller.transfer.money.notenough", Localize("PLUGIN_CURRENCY_NAME"));
                     return;
                 });
             }
@@ -340,14 +340,14 @@ public class PlayerCommands
             {
                 Server.NextWorldUpdate(() =>
                 {
-                    player.LocalizeAnnounce(PL_PREFIX, "cmd.caller.transfer.successful", amountAfterFee, selectedPlayer.PlayerName);
+                    player.LocalizeAnnounce(plPrefix, "cmd.caller.transfer.successful", amountAfterFee, selectedPlayer.PlayerName);
                 });
             }
             if (selectedPlayer.IsConnected())
             {
                 Server.NextWorldUpdate(() =>
                 {
-                    selectedPlayer.LocalizeAnnounce(PL_PREFIX, "cmd.target.transfer.successful", player.PlayerName, amountAfterFee);
+                    selectedPlayer.LocalizeAnnounce(plPrefix, "cmd.target.transfer.successful", player.PlayerName, amountAfterFee);
                 });
             }
         }
@@ -355,7 +355,7 @@ public class PlayerCommands
         {
             Server.NextWorldUpdate(() =>
             {
-                player.LocalizeAnnounce(PL_PREFIX, "cmd.transfer.error");
+                player.LocalizeAnnounce(plPrefix, "cmd.transfer.error");
             });
         }
     }
@@ -371,7 +371,7 @@ public class PlayerCommands
             {
                 if (qty >= instance.Config.HealthshotBuyAmount)
                 {
-                    player.LocalizeChatAnnounce(PL_PREFIX, Localize("cmd.caller.buy.exceeded"));
+                    player.LocalizeChatAnnounce(plPrefix, Localize("cmd.caller.buy.exceeded"));
                     return;
                 }
             }
@@ -383,7 +383,7 @@ public class PlayerCommands
         {
             Server.NextWorldUpdate(() =>
             {
-                player.LocalizeChatAnnounce(PL_PREFIX, "cmd.caller.money.notenough", Localize("PLUGIN_CURRENCY_NAME"));
+                player.LocalizeChatAnnounce(plPrefix, "cmd.caller.money.notenough", Localize("PLUGIN_CURRENCY_NAME"));
             });
             return;
         }
@@ -392,7 +392,7 @@ public class PlayerCommands
         {
             Server.NextWorldUpdate(() =>
             {
-                player.LocalizeChatAnnounce(PL_PREFIX, "cmd.caller.error");
+                player.LocalizeChatAnnounce(plPrefix, "cmd.caller.error");
             });
             return;
         }
@@ -401,7 +401,7 @@ public class PlayerCommands
         {
             Server.NextWorldUpdate(() =>
             {
-                player.LocalizeChatAnnounce(PL_PREFIX, "cmd.caller.error");
+                player.LocalizeChatAnnounce(plPrefix, "cmd.caller.error");
             });
             return;
         }

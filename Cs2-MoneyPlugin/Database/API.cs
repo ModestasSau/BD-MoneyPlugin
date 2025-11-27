@@ -2,8 +2,6 @@
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Entities;
 using CounterStrikeSharp.API.Modules.Menu;
-using Cs2_MoneyPlugin;
-using Cs2_MoneyPlugin.StatsClasses;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -14,6 +12,8 @@ using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
+
+namespace Cs2_MoneyPlugin;
 
 public class API
 {
@@ -39,7 +39,7 @@ public class API
         _APItoken = apiToken;
     }
 
-    public async Task API_GetPlayerBalance(CCSPlayerController player)
+    public async Task GetPlayerBalance(CCSPlayerController player)
     {
         string steamid = player.SteamID.ToString();
         HttpResponseMessage? response = await API_GetMethod(GetBalanceEndpoint, steamid);
@@ -73,7 +73,7 @@ public class API
         }
     }
 
-    public async Task<int?> API_GetPlayerBalance(string steamId)
+    public async Task<int?> GetPlayerBalance(string steamId)
     {
         HttpResponseMessage? response = await API_GetMethod(GetBalanceEndpoint, steamId);
 

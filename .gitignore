@@ -38,3 +38,5 @@ _ReSharper*/
 *.vshost*
 
 /CLEAN_BUILD/
+/Cs2-MoneyPlugin-Tests
+/Cs2-MoneyPlugin/I_Tests

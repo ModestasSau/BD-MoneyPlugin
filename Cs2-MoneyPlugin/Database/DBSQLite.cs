@@ -125,6 +125,8 @@ namespace Cs2_MoneyPlugin
                     {
                         if (enable)
                         {
+                            MoneyBase.instance?.offFeedPlayers.Remove(steamid);
+
                             Server.NextFrame(() =>
                             {
                                 player.LocalizeChatAnnounce(MoneyBase.Localize("PLUGIN_PREFIX"), "settings.moneyfeed.enabled.response");
@@ -132,6 +134,8 @@ namespace Cs2_MoneyPlugin
                         }
                         else
                         {
+                            MoneyBase.instance?.offFeedPlayers.Add(steamid);
+
                             Server.NextFrame(() =>
                             {
                                 player.LocalizeChatAnnounce(MoneyBase.Localize("PLUGIN_PREFIX"), "settings.moneyfeed.disabled.response");

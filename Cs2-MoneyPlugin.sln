@@ -1,11 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.12.35527.113 d17.12
+VisualStudioVersion = 17.12.35527.113
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cs2-MoneyPlugin", "Cs2-MoneyPlugin\Cs2-MoneyPlugin.csproj", "{F50A282E-C3D2-4139-A3C6-521679BB14BC}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APIMoneyPlugin", "APIMoneyPlugin\APIMoneyPlugin.csproj", "{FE0C1D72-4B06-4B1F-8388-C6314B9EC195}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cs2-MoneyPlugin-Tests", "Cs2-MoneyPlugin-Tests\Cs2-MoneyPlugin-Tests.csproj", "{8852DBF3-A7DB-4966-8198-D63023CB6051}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{FE0C1D72-4B06-4B1F-8388-C6314B9EC195}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FE0C1D72-4B06-4B1F-8388-C6314B9EC195}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FE0C1D72-4B06-4B1F-8388-C6314B9EC195}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8852DBF3-A7DB-4966-8198-D63023CB6051}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8852DBF3-A7DB-4966-8198-D63023CB6051}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8852DBF3-A7DB-4966-8198-D63023CB6051}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8852DBF3-A7DB-4966-8198-D63023CB6051}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

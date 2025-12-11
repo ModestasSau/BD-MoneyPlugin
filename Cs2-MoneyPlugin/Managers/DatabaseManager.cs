@@ -1,5 +1,7 @@
-﻿using CounterStrikeSharp.API.Core;
+﻿using CounterStrikeSharp.API;
+using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Entities;
+using CounterStrikeSharp.API.Modules.Menu;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,7 +27,7 @@ namespace Cs2_MoneyPlugin
                 }
                 else if (DB == null && API != null)
                 {
-                    if (await API.ModifyPlayerMoney(steamid, amount))
+                    if (await API.ModifyPlayerMoney(steamid, amount, false))
                     {
                         return true;
                     }
@@ -85,18 +87,18 @@ namespace Cs2_MoneyPlugin
         }
 
         // Take players money
-        public async Task<bool?> TakeMoney(string steamid, int amount)
+        public async Task<bool?> TakeMoney(string steamid, int amount, bool fromAdmin = false)
         {
             if (!BaseManager.CheckSteamid(steamid)) return false;
 
             bool? result = false;
             if (DB != null && API == null)
             {
-                result = await DB.TakePlayerMoney(steamid, amount);
+                result = await DB.TakePlayerMoney(steamid, amount, fromAdmin);
             }
             else if (DB == null && API != null)
             {
-                result = await API.ModifyPlayerMoney(steamid, amount * -1);
+                result = await API.ModifyPlayerMoney(steamid, amount * -1, fromAdmin);
             }
             return result;
         }
@@ -118,26 +120,37 @@ namespace Cs2_MoneyPlugin
         }
 
         // Checking connection and cache single players balance
-        public async Task GetPlayerBalance(CCSPlayerController player)
+        public async Task<int?> GetPlayerBalance(CCSPlayerController player, bool print = false)
         {
-            if (DB != null && API == null)
+            int? result = await GetPlayerBalance(player.SteamID.ToString());
+            if (print)
             {
-                await DB.GetPlayerBalance(player.SteamID.ToString());
+                if (result != null)
+                {
+                    Server.NextFrame(() =>
+                    {
+                        player.LocalizeAnnounce(ChatManager.Localize("PLUGIN_PREFIX"), "cmd.caller.money", MoneyBase.plCurrency, result);
+                    });
+                }
+                else
+                {
+                    Server.NextFrame(() =>
+                    {
+                        player.LocalizeAnnounce(ChatManager.Localize("PLUGIN_PREFIX"), "cmd.caller.money.error");
+                    });
+                }
             }
-            else if (DB == null && API != null)
-            {
-                await API.GetPlayerBalance(player);
-            }
+            return result;
         }
 
         // Get player money
-        public async Task<int?> GetPlayerBalanceNoPrint(string steamid)
+        public async Task<int?> GetPlayerBalance(string steamid)
         {
             if (!BaseManager.CheckSteamid(steamid)) return null;
 
             if (DB != null && API == null)
             {
-                return await DB.GetPlayerBalanceAsync(steamid);
+                return await DB.GetPlayerBalance(steamid);
             }
             else if (DB == null && API != null)
             {
@@ -154,7 +167,22 @@ namespace Cs2_MoneyPlugin
                 await DB.CreatePlayerFieldIfNotExist(playerSteamid);
             }
 
-            // API check are in backend
+            // API checks are in backend
+        }
+
+        public async Task GetPlayerFeedSetting(string steamid)
+        {
+            if (Sqlite == null) return;
+
+            if (!await Sqlite.CheckPlayerFeedAsync(steamid))
+            {
+                offFeedPlayers.Add(steamid);
+            }
+        }
+
+        public bool GetFeedSetting(string steamid)
+        {
+            return offFeedPlayers.Contains(steamid);
         }
 
         // Get and display payer statistics
@@ -162,17 +190,47 @@ namespace Cs2_MoneyPlugin
         {
             if (player == null) return;
 
+            PlayerStats? result = null;
             if (DB != null && API == null)
             {
-                await DB.GetPlayerStats(player);
+                result = await DB.GetPlayerStats(player);
             }
             else if (DB == null && API != null)
             {
-                await API.GetPlayerStats(player);
+                result = await API.GetPlayerStats(player);
+            }
+
+            if (result != null)
+            {
+                int needed = result.Top - result.Today;
+                string record = MoneyBase.Localize("stats.needed.for.record", needed);
+                if (needed <= 0)
+                {
+                    record = MoneyBase.Localize("stats.new.record");
+                }
+                string statsStr = $"<font color='orange'>~~~~~~~ <font color='lime'>{MoneyBase.Localize("stats.title")}</font> ~~~~~~~</font><br>" +
+                                  $"{MoneyBase.Localize("stats.top")}: <font color='orange'>{result.Top}</font><br>" +
+                                  $"{MoneyBase.Localize("stats.today")}: <font color='orange'>{result.Today}</font><br><br>" +
+                                  $"{record}<br>" +
+                                  $"{MoneyBase.Localize("stats.menu.close")}";
+                IMenuInstance? menuInstance = null;
+                Server.NextFrame(() =>
+                {
+                    menuInstance = MoneyBase.instance?.htmlPrinter?.CloseMenuInstance(player, MoneyBase.Localize("cmd.menu.exit"));
+
+                    MoneyBase.instance?.htmlPrinter?.PrintToPlayer(player, menuInstance, statsStr);
+                });
+            }
+            else
+            {
+                Server.NextFrame(() =>
+                {
+                    player.LocalizeChatAnnounce(plPrefix, "cmd.caller.error");
+                });
             }
         }
 
-        public async Task<PlayerStatsAPI?> GetPlayerStats(string steamid)
+        public async Task<PlayerStats?> GetPlayerStats(string steamid)
         {
             if (!BaseManager.CheckSteamid(steamid)) return null;
 

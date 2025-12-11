@@ -113,6 +113,7 @@ namespace Cs2_MoneyPlugin
             if (player.IsLegalNotBot() && playerSteamid != null)
             {
                 _ = instance.CreateDefaultIfNotExist(playerSteamid);
+                _ = instance.GetPlayerFeedSetting(playerSteamid);
                 _ = instance.GetPlayerBalance(player);
 
                 instance.onlinePlayers.Add(player.SteamID.ToString());
@@ -129,6 +130,7 @@ namespace Cs2_MoneyPlugin
             {
                 var playersteamid = @event.Userid.SteamID.ToString();
                 instance.onlinePlayers.Remove(playersteamid);
+
             }
             return HookResult.Continue;
         }
@@ -218,6 +220,9 @@ namespace Cs2_MoneyPlugin
             {
                 if (instance == null) return HookResult.Continue;
 
+                // check if there is inactive round for getting money
+                if (!isActiveRoundForMoney) return HookResult.Continue;
+
                 // if null, or suicide do nothing
                 if (deathEvent == null || deathEvent.Attacker == null || deathEvent.Attacker == deathEvent.Userid) return HookResult.Continue;
 
@@ -226,9 +231,6 @@ namespace Cs2_MoneyPlugin
 
                 // if bot is killed by payer, and if toggle is off - do nothing, (if toggle is on, payer will get money for killing bot)
                 if (deathEvent?.Userid?.IsBot == true && !instance.Config.GiveMoneyForBotKill) return HookResult.Continue;
-
-                // check if there is inactive round for getting money
-                if (!isActiveRoundForMoney) return HookResult.Continue;
 
                 if (deathEvent != null && deathEvent.Attacker != null && deathEvent.Attacker.IsLegalNotBot())
                 {
@@ -259,7 +261,7 @@ namespace Cs2_MoneyPlugin
 
                     if (NoscopeHeadshot && instance.Config.MoneyEvents.MoneyForNoScopeHeadshot != 0)
                     {
-                        moneyAmount += GetVipMoney(isVip, player, "event.eesponse.noscope.headshot", instance.Config.MoneyEvents.MoneyForNoScopeHeadshot);
+                        moneyAmount += GetVipMoney(isVip, player, "event.response.noscope.headshot", instance.Config.MoneyEvents.MoneyForNoScopeHeadshot);
                     }
 
                     else if (noScope && instance.Config.MoneyEvents.MoneyForNoScope != 0)
@@ -296,11 +298,14 @@ namespace Cs2_MoneyPlugin
             // check if VIP
             if (isVip)
             {
-                player.LocalizeChatAnnounce(prefix ?? MoneyBase.plPrefix, localizerName, (int)Math.Round(eventMoney * instance.Config.VipKebabsMultiplier));
+                if (!instance.GetFeedSetting(player.SteamID.ToString()))
+                {
+                    player.LocalizeChatAnnounce(prefix ?? MoneyBase.plPrefix, localizerName, (int)Math.Round(eventMoney * instance.Config.VipKebabsMultiplier), MoneyBase.plCurrency);
+                }
                 return (int)Math.Round(eventMoney * instance.Config.VipKebabsMultiplier);
             }
 
-            player.LocalizeChatAnnounce(prefix ?? MoneyBase.plPrefix, localizerName, eventMoney);
+            player.LocalizeChatAnnounce(prefix ?? MoneyBase.plPrefix, localizerName, eventMoney, MoneyBase.plCurrency);
             return eventMoney;
         }
 

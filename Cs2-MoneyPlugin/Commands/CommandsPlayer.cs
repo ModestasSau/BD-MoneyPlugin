@@ -43,7 +43,7 @@ public class PlayerCommands
     public void RegisterCommands()
     {
         instance.AddCommand("css_menu", "Opens all commands menu.", CommandsMenu);
-        instance.AddCommand("css_money", "Shows how much money you have.", CheckMoney);
+        instance.AddCommand("css_credits", "Shows how much money you have.", CheckMoney);
         instance.AddCommand("css_settings", "Settings menu", Settings);
         instance.AddCommand("css_stats", "Show earned money per session statistics", Statistics);
         instance.AddCommand("css_transfer", "Transfer money to other player.", TransferMoney);
@@ -87,7 +87,7 @@ public class PlayerCommands
     {
         if (player.IsLegalNotBot() && CanExecuteCommand(player.Slot))
         {
-            _ = instance.GetPlayerBalance(player);
+            _ = instance.GetPlayerBalance(player, true);
             AddPlayerToCooldown(player.Slot);
         }
     }
@@ -107,7 +107,6 @@ public class PlayerCommands
     {
         if (player.IsLegalNotBot() && CanExecuteCommand(player.Slot))
         {
-
             _ = instance.GetPlayerStats(player);
 
             AddPlayerToCooldown(player.Slot);
@@ -146,10 +145,11 @@ public class PlayerCommands
             mainMenu.AddMenuOption(MoneyBase.Localize("commands.menu.check.money"), (p, option) => CheckMoney(p));
             mainMenu.AddMenuOption(MoneyBase.Localize("commands.menu.check.money.stats"), (p, option) => Statistics(p));
             mainMenu.AddMenuOption(MoneyBase.Localize("commands.menu.transfer.money"), (p, option) => TransferMoney(p));
-            mainMenu.AddMenuOption(MoneyBase.Localize("commands.menu.buy.healthshot", instance.Config.HealthshotPrice, MoneyBase.Localize("PLUGIN_CURRENCY_NAME")), (p, option) => TransferMoney(p));
+            mainMenu.AddMenuOption(MoneyBase.Localize("commands.menu.buy.healthshot", instance.Config.HealthshotPrice, MoneyBase.Localize("PLUGIN_CURRENCY_NAME")), async (p, option) => await BuyHealthshot(p));
             mainMenu.AddMenuOption(MoneyBase.Localize("commands.menu.settings"), (p, option) => Settings(p));
 
             MenuManager.OpenCenterHtmlMenu(instance, player, mainMenu);
+
         }
     }
 
@@ -256,22 +256,23 @@ public class PlayerCommands
 
         string Title = Localize("cmd.caller.transfer.players.menu");
 
-        if (instance == null) return;
-
         CenterHtmlMenu playersMenu = new(Title, instance);
 
         foreach (var p in Utilities.GetPlayers())
         {
             if (p == null) continue;
             if (!p.IsLegalNotBot()) continue;
-            if (p == player) continue;
-            if (!instance.onlinePlayers.Contains(p.SteamID.ToString())) continue;
 
+            if (DEBUG == false)
+            {
+                if (p == player) continue;
+                if (!instance.onlinePlayers.Contains(p.SteamID.ToString())) continue;
+            }
             playersMenu.AddMenuOption(p.PlayerName, (opponent, option) => { ConfirmTransfer(player, p, amount); });
         }
         if (playersMenu.MenuOptions.Count > 0)
         {
-            player.LocalizeChatAnnounce(plPrefix, "cmd.caller.transfer.amount.selected", amount);
+            player.LocalizeChatAnnounce(plPrefix, "cmd.caller.transfer.amount.selected", amount, plCurrency);
             MenuManager.OpenCenterHtmlMenu(instance, player, playersMenu);
         }
         else
@@ -318,7 +319,7 @@ public class PlayerCommands
         MenuManager.CloseActiveMenu(player);
 
         int amountAfterFee = amount - (amount * instance.Config.TransferFeePercent / 100);
-        var bal = await instance.GetPlayerBalanceNoPrint(player.SteamID.ToString());
+        var bal = await instance.GetPlayerBalance(player.SteamID.ToString());
 
         if (bal < amount)
         {
@@ -340,14 +341,14 @@ public class PlayerCommands
             {
                 Server.NextWorldUpdate(() =>
                 {
-                    player.LocalizeAnnounce(plPrefix, "cmd.caller.transfer.successful", amountAfterFee, selectedPlayer.PlayerName);
+                    player.LocalizeAnnounce(plPrefix, "cmd.caller.transfer.successful", amountAfterFee, plCurrency, selectedPlayer.PlayerName);
                 });
             }
             if (selectedPlayer.IsConnected())
             {
                 Server.NextWorldUpdate(() =>
                 {
-                    selectedPlayer.LocalizeAnnounce(plPrefix, "cmd.target.transfer.successful", player.PlayerName, amountAfterFee);
+                    selectedPlayer.LocalizeAnnounce(plPrefix, "cmd.target.transfer.successful", player.PlayerName, amountAfterFee, plCurrency);
                 });
             }
         }
@@ -371,13 +372,16 @@ public class PlayerCommands
             {
                 if (qty >= instance.Config.HealthshotBuyAmount)
                 {
-                    player.LocalizeChatAnnounce(plPrefix, Localize("cmd.caller.buy.exceeded"));
+                    Server.NextWorldUpdate(() =>
+                    {
+                        player.LocalizeChatAnnounce(plPrefix, Localize("cmd.caller.buy.exceeded"));
+                    });
                     return;
                 }
             }
         }
 
-        int? playerBalance = await instance.GetPlayerBalanceNoPrint(player.SteamID.ToString());
+        int? playerBalance = await instance.GetPlayerBalance(player.SteamID.ToString());
 
         if (playerBalance == null || playerBalance < instance.Config.HealthshotPrice)
         {
@@ -408,7 +412,8 @@ public class PlayerCommands
 
         if (player.IsLegalAlive())
         {
-            player.GiveNamedItem(CsItem.Healthshot);
+            Server.NextWorldUpdate(() => { player.GiveNamedItem(CsItem.Healthshot); });
+
             if (BoughtHealtshotPlayers.ContainsKey(player.Slot))
             {
                 BoughtHealtshotPlayers[player.Slot]++;

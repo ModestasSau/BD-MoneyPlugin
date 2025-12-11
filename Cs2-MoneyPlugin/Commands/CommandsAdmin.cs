@@ -90,7 +90,7 @@ namespace Cs2_MoneyPlugin
                         }
                         else
                         {
-                            player.LocalizeChatAnnounce(MoneyBase.plPrefix, "cmd.caller.announce.addmoney", moneyAmount, target);
+                            player.LocalizeChatAnnounce(MoneyBase.plPrefix, "cmd.caller.announce.addmoney", moneyAmount, MoneyBase.plCurrency, target);
                         }
                         _ = instance.AddMoneyAsync(target, moneyAmount);
                         return;
@@ -130,9 +130,9 @@ namespace Cs2_MoneyPlugin
                     }
                     else
                     {
-                        player.LocalizeChatAnnounce(MoneyBase.plPrefix, "cmd.caller.announce.addmoney", moneyAmount, p.PlayerName);
+                        player.LocalizeChatAnnounce(MoneyBase.plPrefix, "cmd.caller.announce.addmoney", moneyAmount, MoneyBase.plCurrency, p.PlayerName);
                     }
-                    p.LocalizeChatAnnounce(MoneyBase.plPrefix, "cmd.target.announce.addmoney", moneyAmount);
+                    p.LocalizeChatAnnounce(MoneyBase.plPrefix, "cmd.target.announce.addmoney", moneyAmount, MoneyBase.plCurrency);
 
                     _ = instance.AddMoneyAsync(p.SteamID.ToString(), moneyAmount);
                 }
@@ -192,7 +192,7 @@ namespace Cs2_MoneyPlugin
                         }
                         else
                         {
-                            player.LocalizeAnnounce(MoneyBase.plPrefix, "cmd.caller.announce.takemoney", moneyAmount, target);
+                            player.LocalizeAnnounce(MoneyBase.plPrefix, "cmd.caller.announce.takemoney", moneyAmount, MoneyBase.plCurrency, target);
                         }
                         _ = instance.TakeMoney(target, moneyAmount);
                         return;
@@ -224,9 +224,9 @@ namespace Cs2_MoneyPlugin
                     }
                     else
                     {
-                        player.LocalizeAnnounce(MoneyBase.plPrefix, "cmd.caller.announce.takemoney", moneyAmount, target);
+                        player.LocalizeAnnounce(MoneyBase.plPrefix, "cmd.caller.announce.takemoney", moneyAmount, MoneyBase.plCurrency, target);
                     }
-                    p.LocalizeAnnounce(MoneyBase.plPrefix, "cmd.target.announce.takemoney", moneyAmount);
+                    p.LocalizeAnnounce(MoneyBase.plPrefix, "cmd.target.announce.takemoney", moneyAmount, MoneyBase.plCurrency);
                     _ = instance.TakeMoney(p.SteamID.ToString(), moneyAmount);
                 }
             });
@@ -270,7 +270,7 @@ namespace Cs2_MoneyPlugin
                         }
                         else
                         {
-                            player.LocalizeAnnounce(MoneyBase.plPrefix, "cmd.caller.announce.resetmoney", target);
+                            player.LocalizeAnnounce(MoneyBase.plPrefix, "cmd.caller.announce.resetmoney", target, MoneyBase.plCurrency);
                         }
                         instance.ResetMoney(target);
                         return;

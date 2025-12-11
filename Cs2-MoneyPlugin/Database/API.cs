@@ -39,40 +39,6 @@ public class API
         _APItoken = apiToken;
     }
 
-    public async Task GetPlayerBalance(CCSPlayerController player)
-    {
-        string steamid = player.SteamID.ToString();
-        HttpResponseMessage? response = await API_GetMethod(GetBalanceEndpoint, steamid);
-
-        if (response != null && response.StatusCode == System.Net.HttpStatusCode.OK)
-        {
-            string? bal = await response.Content.ReadAsStringAsync();
-
-            if (bal is not null && bal.Length > 0)
-            {
-                if (int.TryParse(bal, out int balance) && balance >= 0)
-                {
-
-                    Server.NextFrame(() =>
-                    {
-                        player.LocalizeAnnounce(ChatManager.Localize("PLUGIN_PREFIX"), "cmd.caller.money", balance);
-                    });
-                }
-            }
-        }
-        else
-        {
-            Server.NextFrame(() =>
-            {
-                player.LocalizeAnnounce(ChatManager.Localize("PLUGIN_PREFIX"), "cmd.caller.money.error");
-            });
-
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine("[MoneyPlugin] Error in getting player balance " + response?.StatusCode);
-            Console.ResetColor();
-        }
-    }
-
     public async Task<int?> GetPlayerBalance(string steamId)
     {
         HttpResponseMessage? response = await API_GetMethod(GetBalanceEndpoint, steamId);
@@ -98,57 +64,28 @@ public class API
         return null;
     }
 
-    public async Task GetPlayerStats(CCSPlayerController player)
+    public async Task<PlayerStats?> GetPlayerStats(CCSPlayerController player)
     {
         string steamid = player.SteamID.ToString();
-
-        HttpResponseMessage? response = await API_GetMethod(GetPlayerStatsEndpoint, steamid);
-
-        if (response != null && response.StatusCode == System.Net.HttpStatusCode.OK)
-        {
-            PlayerStatsAPI? playerStats = await response.Content.ReadFromJsonAsync<PlayerStatsAPI>();
-
-            if (playerStats != null)
-            {
-                int needed = playerStats.Top - playerStats.Today;
-                string record = MoneyBase.Localize("stats.needed.for.record", needed);
-                if (needed <= 0)
-                {
-                    record = MoneyBase.Localize("stats.new.record");
-                }
-                string statsStr = $"<font color='orange'>~~~~~~~ <font color='lime'>{MoneyBase.Localize("stats.title")}</font> ~~~~~~~</font><br>" +
-                                  $"{MoneyBase.Localize("stats.top")}: <font color='orange'>{playerStats.Top}</font><br>" +
-                                  $"{MoneyBase.Localize("stats.today")}: <font color='orange'>{playerStats.Today}</font><br><br>" +
-                                  $"{record}<br>" +
-                                  $"{MoneyBase.Localize("stats.menu.close")}";
-
-                IMenuInstance? menuInstance = null;
-                Server.NextFrame(() =>
-                {
-                    menuInstance = MoneyBase.instance?.htmlPrinter?.CloseMenuInstance(player, MoneyBase.Localize("cmd.menu.exit"));
-                    MoneyBase.instance?.htmlPrinter?.PrintToPlayer(player, menuInstance, statsStr);
-                });
-            }
-        }
-        else
-        {
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine("[MoneyPlugin] Error in getting player stats " + response?.StatusCode);
-            Console.ResetColor();
-        }
+        return await GetPlayerStats(steamid);
     }
 
-    public async Task<PlayerStatsAPI?> GetPlayerStats(string steamid)
+    public async Task<PlayerStats?> GetPlayerStats(string steamid)
     {
         HttpResponseMessage? response = await API_GetMethod(GetPlayerStatsEndpoint, steamid);
 
         if (response != null && response.StatusCode == System.Net.HttpStatusCode.OK)
         {
-            PlayerStatsAPI? flipstats = await response.Content.ReadFromJsonAsync<PlayerStatsAPI>();
+            PlayerStatsAPI? stats = await response.Content.ReadFromJsonAsync<PlayerStatsAPI>();
 
-            if (flipstats != null)
+            if (stats != null)
             {
-                return flipstats;
+                PlayerStats pStats = new PlayerStats()
+                {
+                    Today = stats.Today,
+                    Top = stats.Top,
+                };
+                return pStats;
             }
         }
         else
@@ -162,10 +99,11 @@ public class API
     }
 
 
-    public async Task<bool> ModifyPlayerMoney(string steamid, int playerMoney)
+    public async Task<bool> ModifyPlayerMoney(string steamid, int playerMoney, bool fromAdmin)
     {
         var playerMoneyUpdates = new List<Dictionary<string, object>>
         {
+            new Dictionary<string, object> { { "admin", fromAdmin } },
             new Dictionary<string, object> { { "steamid64", steamid }, { "amount", playerMoney } }
         };
 

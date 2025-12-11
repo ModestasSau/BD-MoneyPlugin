@@ -47,6 +47,9 @@ public partial class MoneyBase
 
     public class BaseConfig : BasePluginConfig
     {
+        [JsonPropertyName("DEBUG_MODE")]
+        public bool Debug { get; set; } = false;
+
         [JsonPropertyName("MinPlayersForActivating")]
         public int MinPlayersForActivating { get; set; } = 4;
 

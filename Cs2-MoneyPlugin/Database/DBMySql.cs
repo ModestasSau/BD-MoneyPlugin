@@ -26,6 +26,20 @@ public class DBMySql
         Config = config;
     }
 
+    public MySqlConnection GetConnection()
+    {
+        try
+        {
+            var connection = new MySqlConnection(_dbConnectionString);
+            connection.Open();
+            return connection;
+        }
+        catch (Exception ex)
+        {
+            throw new DatabaseException("[MoneyPlugin] Failed to establish a database connection.", ex);
+        }
+    }
+
     public async Task<MySqlConnection> GetConnectionAsync()
     {
         try
@@ -60,8 +74,9 @@ public class DBMySql
 
                 if (playerCountInStatistics == 0)
                 {
-                    var insertStatsQuery = $"INSERT INTO `{Config.DBConfig.playerStatistics}` (steamid, today) VALUES (@SteamID, @Today)";
-                    await connection.ExecuteAsync(insertStatsQuery, new { SteamID = steamId, Today = 0 });
+                    DateTime timestamp = DateTime.Now;
+                    var insertStatsQuery = $"INSERT INTO `{Config.DBConfig.playerStatistics}` (steamid, total_today, top_per_day, date) VALUES (@SteamID, @Today, @Top, @Date)";
+                    await connection.ExecuteAsync(insertStatsQuery, new { SteamID = steamId, Today = 0, Top = 0, Date = timestamp.Date });
                 }
             }
         }
@@ -73,26 +88,7 @@ public class DBMySql
         }
     }
 
-    public async Task GetPlayerBalance(string steamId)
-    {
-        try
-        {
-            using (var connection = await GetConnectionAsync())
-            {
-                var selectQuery = $"SELECT `balance` FROM `{Config.DBConfig.moneyTableName}` WHERE `steamid` = @SteamId";
-                var balance = await connection.ExecuteScalarAsync<int>(selectQuery, new { SteamId = steamId });
-            }
-        }
-        catch (Exception ex)
-        {
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine($"[MoneyPlugin] An error occurred while retrieving balance: {ex.Message}");
-            Console.ResetColor();
-            throw;
-        }
-    }
-
-    public async Task<int?> GetPlayerBalanceAsync(string steamId)
+    public async Task<int?> GetPlayerBalance(string steamId)
     {
         try
         {
@@ -147,7 +143,7 @@ public class DBMySql
         }
     }
 
-    public async Task<bool?> TakePlayerMoney(string steamId, int amount)
+    public async Task<bool?> TakePlayerMoney(string steamId, int amount, bool fromAdmin)
     {
         MySqlTransaction? transaction = null;
         try
@@ -169,14 +165,17 @@ public class DBMySql
                             transaction?.Commit();
                             return true;
                         }
-                        else
+                        if (fromAdmin)
                         {
-                            transaction?.Rollback();
-                            Console.ForegroundColor = ConsoleColor.Red;
-                            Console.WriteLine($"[MoneyPlugin] Player {steamId} doesn't have enough money to take away {amount}.");
-                            Console.ResetColor();
-                            return false;
+                            var updateQuery = $"UPDATE `{Config.DBConfig.moneyTableName}` SET `balance` = 0 WHERE steamid = @SteamID";
+                            await connection.ExecuteAsync(updateQuery, new { SteamID = steamId }, transaction);
+
+                            transaction?.Commit();
+                            return true;
                         }
+
+                        return false;
+
                     }
                     catch (Exception ex)
                     {
@@ -257,7 +256,7 @@ public class DBMySql
 
                 // transfer log
                 DateTime timestamp = DateTime.UtcNow;
-                await SaveTransferLog(timestamp.Date, payerSteamid, takeAmount, receiverSteamid, giveAmount);
+                await SaveTransferLog(timestamp, payerSteamid, takeAmount, receiverSteamid, giveAmount);
                 return true;
             }
         }
@@ -289,8 +288,6 @@ public class DBMySql
         {
             using (var connection = await GetConnectionAsync())
             {
-                await connection.OpenAsync();
-
                 // Begin a transaction
                 using (transaction = connection.BeginTransaction())
                 {
@@ -356,19 +353,19 @@ public class DBMySql
             {
                 var updateQuery = @"
                     UPDATE `{0}` SET 
-                        date = @Date,
-                        total_today = 
-                        CASE
-                            WHEN date = @Date THEN total_today + @Amount
-                            ELSE @Amount
-                        END,
-                        top_per_day = 
-                        CASE
-                            WHEN date = @Date
-                                THEN GREATEST(top_per_day, total_today + @Amount)
-                            ELSE
-                                GREATEST(top_per_day, total_today)
-                        END
+                        top_per_day =
+                            CASE
+                                WHEN date = @Date
+                                    THEN GREATEST(top_per_day, total_today + @Amount)
+                                ELSE
+                                    GREATEST(top_per_day, @Amount)
+                            END,
+                        total_today =
+                            CASE
+                                WHEN date = @Date THEN total_today + @Amount
+                                ELSE @Amount
+                            END,
+                        date = @Date
                     WHERE steamid = @SteamID;";
 
                 var formattedQuery = string.Format(updateQuery, Config.DBConfig.playerStatistics);
@@ -388,61 +385,13 @@ public class DBMySql
         }
     }
 
-    public async Task GetPlayerStats(CCSPlayerController player)
+    public async Task<PlayerStats?> GetPlayerStats(CCSPlayerController player)
     {
-        try
-        {
-            if (MoneyBase.instance == null) return;
-
-            using (var connection = await GetConnectionAsync())
-            {
-                var selectQuery = @"
-                    SELECT 
-                        total_today AS Today, 
-                        top_per_day AS Top,
-                    FROM `{0}`
-                    WHERE steamid = @SteamID;";
-
-
-                var formattedQuery = string.Format(selectQuery, Config.DBConfig.playerStatistics);
-                var playerStats = await connection.QueryFirstOrDefaultAsync<PlayerStats>(formattedQuery, new { SteamID = player.SteamID.ToString() });
-
-                if (playerStats != null)
-                {
-                    int needed = playerStats.Top - playerStats.Today;
-                    string record = MoneyBase.Localize("stats.needed.for.record", needed);
-                    if (needed <= 0)
-                    {
-                        record = MoneyBase.Localize("stats.new.record");
-                    }
-                    string statsStr = $"<font color='orange'>~~~~~~~ <font color='lime'>{MoneyBase.Localize("stats.title")}</font> ~~~~~~~</font><br>" +
-                                      $"{MoneyBase.Localize("stats.top")}: <font color='orange'>{playerStats.Top}</font><br>" +
-                                      $"{MoneyBase.Localize("stats.today")}: <font color='orange'>{playerStats.Today}</font><br><br>" +
-                                      $"{record}<br>" +
-                                      $"{MoneyBase.Localize("stats.menu.close")}";
-                    IMenuInstance? menuInstance = null;
-                    Server.NextFrame(() =>
-                    {
-                        menuInstance = MoneyBase.instance?.htmlPrinter?.CloseMenuInstance(player, MoneyBase.Localize("cmd.menu.exit"));
-
-                        MoneyBase.instance?.htmlPrinter?.PrintToPlayer(player, menuInstance, statsStr);
-                    });
-                }
-                else
-                {
-                    Console.WriteLine($"No flip statistics found for SteamID {player.SteamID}");
-                }
-            }
-        }
-        catch (Exception ex)
-        {
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine($"[MoneyPlugin] An error occurred while fetching player statistics: {ex.Message}");
-            Console.ResetColor();
-        }
+        string steamid64 = player.SteamID.ToString();
+        return await GetPlayerStats(steamid64);
     }
 
-    public async Task<PlayerStatsAPI?> GetPlayerStats(string steamid)
+    public async Task<PlayerStats?> GetPlayerStats(string steamid)
     {
         try
         {
@@ -451,30 +400,13 @@ public class DBMySql
                 var selectQuery = @"
                     SELECT 
                         total_today AS Today, 
-                        top_per_day AS Top,
+                        top_per_day AS Top
                     FROM `{0}`
                     WHERE steamid = @SteamID;";
 
 
                 var formattedQuery = string.Format(selectQuery, Config.DBConfig.playerStatistics);
-                var playerStats = await connection.QueryFirstOrDefaultAsync<PlayerStats>(formattedQuery, new { SteamID = steamid });
-
-                if (playerStats != null)
-                {
-                    PlayerStatsAPI playerStatsAPI = new()
-                    {
-                        Steamid64 = steamid,
-                        Top = playerStats.Top,
-                        Today = playerStats.Today
-                    };
-
-                    return playerStatsAPI;
-                }
-                else
-                {
-                    Console.WriteLine($"No flip statistics found for SteamID {steamid}");
-                    return null;
-                }
+                return await connection.QueryFirstOrDefaultAsync<PlayerStats>(formattedQuery, new { SteamID = steamid });
             }
         }
         catch (Exception ex)

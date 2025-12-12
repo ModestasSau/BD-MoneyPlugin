@@ -392,16 +392,7 @@ public class PlayerCommands
             return;
         }
         bool? result = await instance.TakeMoney(player.SteamID.ToString(), instance.Config.HealthshotPrice);
-        if (result == null)
-        {
-            Server.NextWorldUpdate(() =>
-            {
-                player.LocalizeChatAnnounce(plPrefix, "cmd.caller.error");
-            });
-            return;
-        }
-
-        if (result == false)
+        if (result == null || result == false)
         {
             Server.NextWorldUpdate(() =>
             {

@@ -6,7 +6,7 @@ MoneyPlugin for Counter-Strike is a versatile plugin designed to enhance the gam
 
 - **Commands**:
   - `!menu` - opens all commands menu
-  - `!credits` - show money amount
+  - `!credits` - checks money balance
   - `!settings` - opens settings menu
   - `!stats` - shows player earning statistics (TOP per day and earned today)
   - `!transfer` - transfer money to other player

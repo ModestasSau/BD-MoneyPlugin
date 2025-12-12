@@ -29,6 +29,6 @@ MoneyPlugin for Counter-Strike is a versatile plugin designed to enhance the gam
 - **Reward System**: Award players for various in-game events and achievements, including kills, headshots, round wins, knife kills, and more.
 
 ## Database ##
-- Optionally use **ONLY ONE** of: MySQL or API endpoints, otherwise it will take only MySQL.
+- Optionally use **ONLY ONE**: MySQL or API endpoints, otherwise it will take only MySQL.
 - SQLite acts like in game cookie and stores players settings.
 

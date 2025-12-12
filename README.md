@@ -6,7 +6,7 @@ MoneyPlugin for Counter-Strike is a versatile plugin designed to enhance the gam
 
 - **Commands**:
   - `!menu` - opens all commands menu
-  - `!money` - show money amount
+  - `!credits` - show money amount
   - `!settings` - opens settings menu
   - `!stats` - shows player earning statistics (TOP per day and earned today)
   - `!transfer` - transfer money to other player
@@ -24,15 +24,11 @@ MoneyPlugin for Counter-Strike is a versatile plugin designed to enhance the gam
 	- `GivePlayerMoney(string steamid, in money)` *void*
 	- `AwardPlayerMoney(string steamid, int money, string? prefix = null, string? messageToPlayer = null)`
  		- 	*prefix and messageToPlayer are optional, by default null, there applies VIP multiplier for given money amount. Returns bool*
-	**For Jailbreak servers:**
-	- `AwardLRWinnerPlayer(string steamid, int money)` *(you can use these, or from above, doesnt matter)
-	- `AwardLRLoserPlayer(string steamid, int money)`
-
 - **API Endpoints Usage**: Uses API endpoints for better data checking and managing. Using Auth - Bearer token.
 - **Database Support**: Utilize MySQL databases for storing and managing player financial data.
 - **Reward System**: Award players for various in-game events and achievements, including kills, headshots, round wins, knife kills, and more.
 
 ## Database ##
-- Optionally use **ONLY ONE** of: MySQL or API endpoints, otherwise it wont work at all.
+- Optionally use **ONLY ONE** of: MySQL or API endpoints, otherwise it will take only MySQL.
 - SQLite acts like in game cookie and stores players settings.
 

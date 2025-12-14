@@ -1,6 +1,6 @@
 # MoneyPlugin #
 
-MoneyPlugin for Counter-Strike is a versatile plugin designed to enhance the gameplay experience by introducing various commands and features related to in-game currency management and rewards. It extends the functionality of your Counter-Strike server by providing commands such as `/givemoney`, `/takemoney`, and `/resetmoney`, allowing server administrators to manage player finances according to specific needs. 
+MoneyPlugin for Counter-Strike is universal plugin designed to enhance the gameplay experience by introducing various commands and features related to in-game currency management and rewards. It extends the functionality of Counter-Strike server by providing commands such as `/credits`, `/transfer`, `/hs` to player, and `/givemoney`, `/takemoney`, and `/resetmoney` to administrators, allowing to manage player credits according to specific needs.
 
 ## Features ##
 
@@ -25,10 +25,14 @@ MoneyPlugin for Counter-Strike is a versatile plugin designed to enhance the gam
 	- `AwardPlayerMoney(string steamid, int money, string? prefix = null, string? messageToPlayer = null)`
  		- 	*prefix and messageToPlayer are optional, by default null, there applies VIP multiplier for given money amount. Returns bool*
 - **API Endpoints Usage**: Uses API endpoints for better data checking and managing. Using Auth - Bearer token.
-- **Database Support**: Utilize MySQL databases for storing and managing player financial data.
+- **Database Support**: Utilize MySQL databases for storing and managing player credits, statistics data.
 - **Reward System**: Award players for various in-game events and achievements, including kills, headshots, round wins, knife kills, and more.
 
 ## Database ##
 - Optionally use **ONLY ONE**: MySQL or API endpoints, otherwise it will take only MySQL.
 - SQLite acts like in game cookie and stores players settings.
+
+## Requirements ##
+- Metamod:Source v2.0.0 dev build 1374
+- CounterStrikeSharp latest version available.
 

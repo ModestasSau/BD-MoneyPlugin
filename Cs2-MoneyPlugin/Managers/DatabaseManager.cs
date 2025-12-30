@@ -180,7 +180,7 @@ namespace Cs2_MoneyPlugin
             }
         }
 
-        public bool GetFeedSetting(string steamid)
+        public bool CheckOffFeed(string steamid)
         {
             return offFeedPlayers.Contains(steamid);
         }

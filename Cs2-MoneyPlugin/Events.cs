@@ -183,12 +183,12 @@ namespace Cs2_MoneyPlugin
 
                     if (isWin)
                     {
-                        int winMoneyAmount = GetVipMoney(playerController.IsVip(), playerController, "event.response.roundwin", instance.Config.MoneyEvents.MoneyForRoundWin);
+                        int winMoneyAmount = VipMultiplierAndNotification(playerController.IsVip(), playerController, "event.response.roundwin", instance.Config.MoneyEvents.MoneyForRoundWin);
                         _ = instance.AddMoneyAsync(playerSteamid, winMoneyAmount);
                     }
                     else
                     {
-                        int loseMoneyAmount = GetVipMoney(playerController.IsVip(), playerController, "event.response.roundlose", instance.Config.MoneyEvents.MoneyForRoundLose);
+                        int loseMoneyAmount = VipMultiplierAndNotification(playerController.IsVip(), playerController, "event.response.roundlose", instance.Config.MoneyEvents.MoneyForRoundLose);
                         _ = instance.AddMoneyAsync(playerSteamid, loseMoneyAmount);
                     }
                 }
@@ -245,12 +245,12 @@ namespace Cs2_MoneyPlugin
                     {
                         if (weapon.Contains("knife") && instance.Config.MoneyEvents.MoneyForKnife != 0)
                         {
-                            moneyAmount = GetVipMoney(isVip, player, "event.response.knife", instance.Config.MoneyEvents.MoneyForKnife);
+                            moneyAmount += VipMultiplierAndNotification(isVip, player, "event.response.knife", instance.Config.MoneyEvents.MoneyForKnife);
                             foundMelee = true;
                         }
                         else if (weapon.Contains("taser") && instance.Config.MoneyEvents.MoneyForTaser != 0)
                         {
-                            moneyAmount = GetVipMoney(isVip, player, "event.response.taser", instance.Config.MoneyEvents.MoneyForTaser);
+                            moneyAmount += VipMultiplierAndNotification(isVip, player, "event.response.taser", instance.Config.MoneyEvents.MoneyForTaser);
                             foundMelee = true;
                         }
                     }
@@ -261,21 +261,21 @@ namespace Cs2_MoneyPlugin
 
                     if (NoscopeHeadshot && instance.Config.MoneyEvents.MoneyForNoScopeHeadshot != 0)
                     {
-                        moneyAmount += GetVipMoney(isVip, player, "event.response.noscope.headshot", instance.Config.MoneyEvents.MoneyForNoScopeHeadshot);
+                        moneyAmount += VipMultiplierAndNotification(isVip, player, "event.response.noscope.headshot", instance.Config.MoneyEvents.MoneyForNoScopeHeadshot);
                     }
 
                     else if (noScope && instance.Config.MoneyEvents.MoneyForNoScope != 0)
                     {
-                        moneyAmount += GetVipMoney(isVip, player, "event.response.noscope", instance.Config.MoneyEvents.MoneyForNoScope);
+                        moneyAmount += VipMultiplierAndNotification(isVip, player, "event.response.noscope", instance.Config.MoneyEvents.MoneyForNoScope);
                     }
                     else if (headshot && instance.Config.MoneyEvents.MoneyForHeadshot != 0)
                     {
-                        moneyAmount += GetVipMoney(isVip, player, "event.response.headshot", instance.Config.MoneyEvents.MoneyForHeadshot);
+                        moneyAmount += VipMultiplierAndNotification(isVip, player, "event.response.headshot", instance.Config.MoneyEvents.MoneyForHeadshot);
                     }
 
                     if (instance.Config.MoneyEvents.MoneyForKill != 0 && !foundMelee && !headshot && !noScope && !NoscopeHeadshot)
                     {
-                        moneyAmount += GetVipMoney(isVip, player, "event.response.kill", instance.Config.MoneyEvents.MoneyForKill);
+                        moneyAmount += VipMultiplierAndNotification(isVip, player, "event.response.kill", instance.Config.MoneyEvents.MoneyForKill);
                     }
 
                     if (moneyAmount > 0)
@@ -291,21 +291,20 @@ namespace Cs2_MoneyPlugin
             return HookResult.Continue;
         }
 
-        public int GetVipMoney(bool isVip, CCSPlayerController player, string localizerName, int eventMoney, string? prefix = null)
+        public int VipMultiplierAndNotification(bool isVip, CCSPlayerController player, string localizerName, int eventMoney, string? prefix = null)
         {
             if (instance == null) return eventMoney;
 
-            // check if VIP
+            // apply multiplier for VIP
             if (isVip)
             {
-                if (!instance.GetFeedSetting(player.SteamID.ToString()))
-                {
-                    player.LocalizeChatAnnounce(prefix ?? MoneyBase.plPrefix, localizerName, (int)Math.Round(eventMoney * instance.Config.VipKebabsMultiplier), MoneyBase.plCurrency);
-                }
-                return (int)Math.Round(eventMoney * instance.Config.VipKebabsMultiplier);
+                eventMoney = (int)Math.Round(eventMoney * instance.Config.VipKebabsMultiplier);
             }
 
-            player.LocalizeChatAnnounce(prefix ?? MoneyBase.plPrefix, localizerName, eventMoney, MoneyBase.plCurrency);
+            if (!instance.CheckOffFeed(player.SteamID.ToString()))
+            {
+                player.LocalizeChatAnnounce(prefix ?? MoneyBase.plPrefix, localizerName, eventMoney, MoneyBase.plCurrency);
+            }
             return eventMoney;
         }
 
@@ -319,7 +318,7 @@ namespace Cs2_MoneyPlugin
 
             if (instance.Config.MoneyEvents.MoneyForMVP > 0)
             {
-                int moneyAmount = GetVipMoney(mvpEvent.Userid.IsVip(), mvpEvent.Userid, "event.response.mvp", instance.Config.MoneyEvents.MoneyForMVP);
+                int moneyAmount = VipMultiplierAndNotification(mvpEvent.Userid.IsVip(), mvpEvent.Userid, "event.response.mvp", instance.Config.MoneyEvents.MoneyForMVP);
                 _ = instance.AddMoneyAsync(mvpPlayerSteamId64, moneyAmount);
             }
             return HookResult.Continue;
@@ -385,19 +384,19 @@ namespace Cs2_MoneyPlugin
 
                         if (winnerTeam == -1 && instance.Config.MoneyEvents.MoneyForGameTie != 0)
                         {
-                            moneyAmount = GetVipMoney(isVip, player, "event.response.gametie", instance.Config.MoneyEvents.MoneyForGameTie);
+                            moneyAmount = VipMultiplierAndNotification(isVip, player, "event.response.gametie", instance.Config.MoneyEvents.MoneyForGameTie);
                             gameEndPay.Add(playerSteamid, moneyAmount);
                             continue;
                         }
                         else if (player.TeamNum == winnerTeam && instance.Config.MoneyEvents.MoneyForGameWin != 0)
                         {
-                            moneyAmount = GetVipMoney(isVip, player, "event.response.gamewinner", instance.Config.MoneyEvents.MoneyForGameWin);
+                            moneyAmount = VipMultiplierAndNotification(isVip, player, "event.response.gamewinner", instance.Config.MoneyEvents.MoneyForGameWin);
                             gameEndPay.Add(playerSteamid, moneyAmount);
                             continue;
                         }
                         else if (instance.Config.MoneyEvents.MoneyForGameLose != 0)
                         {
-                            moneyAmount = GetVipMoney(isVip, player, "event.response.gameloser", instance.Config.MoneyEvents.MoneyForGameLose);
+                            moneyAmount = VipMultiplierAndNotification(isVip, player, "event.response.gameloser", instance.Config.MoneyEvents.MoneyForGameLose);
                             gameEndPay.Add(playerSteamid, moneyAmount);
                         }
                     }

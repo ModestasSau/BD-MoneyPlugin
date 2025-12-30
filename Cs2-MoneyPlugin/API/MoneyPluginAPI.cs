@@ -71,7 +71,7 @@ public class MoneyPluginAPI : IMoneyPlugin
             {
                 Server.NextFrame(() =>
                 {
-                    finalMoney = MoneyBase.instance.gameEvents.GetVipMoney(
+                    finalMoney = MoneyBase.instance.gameEvents.VipMultiplierAndNotification(
                     player.IsVip(),
                     player,
                     "cmd.target.announce.addmoney",
